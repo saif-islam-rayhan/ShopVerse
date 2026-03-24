@@ -8,6 +8,8 @@ from .auth import (
     UserResponse,
     AuthResponse,
     ErrorResponse,
+    UpdateProfileRequest,
+    ProfileResponse,
 )
 
 __all__ = [
@@ -18,4 +20,6 @@ __all__ = [
     "UserResponse",
     "AuthResponse",
     "ErrorResponse",
+    "UpdateProfileRequest",
+    "ProfileResponse",
 ]

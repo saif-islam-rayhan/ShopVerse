@@ -44,11 +44,13 @@ This guide walks you through setting up Google OAuth 2.0 for the ShopVerse authe
 
 1. Under "Authorized origins (URIs)" add:
    - `http://localhost:5173` (for local development)
+   - `http://127.0.0.1:5173` (recommended to add both)
    - `http://localhost:3000` (if using different port)
    - Your production domain (e.g., `https://shopverse.com`)
+   - **Note:** Do not add a trailing slash (e.g., `http://localhost:5173/` is invalid for origins).
 
 2. Under "Authorized redirect URIs" add:
-   - `http://localhost:8000/api/v1/auth/google/callback` (for local development)
+   - `http://localhost:5000/api/v1/auth/google/callback` (for local development)
    - `http://localhost:5173/auth/google/callback` (alternative)
    - Your production redirect URI
 
@@ -66,7 +68,7 @@ In `/backend/.env`:
 ```env
 GOOGLE_CLIENT_ID=your-copied-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your-copied-client-secret
-GOOGLE_REDIRECT_URI=http://localhost:8000/api/v1/auth/google/callback
+GOOGLE_REDIRECT_URI=http://localhost:5000/api/v1/auth/google/callback
 ```
 
 ## Step 7: Add to Frontend `.env`

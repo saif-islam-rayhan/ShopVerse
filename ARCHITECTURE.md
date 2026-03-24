@@ -394,7 +394,7 @@ If 401: Redirect to login
 
 ### Development
 - Local MongoDB
-- Local backend on port 8000
+ - Local backend on port 5000
 - Local frontend on port 5173
 - Hot reloading enabled
 

@@ -30,6 +30,9 @@ class User(BaseModel):
     password: str  # Hashed password
     auth_provider: str = "local"  # 'local', 'google'
     provider_id: Optional[str] = None  # Google ID if OAuth
+    full_name: Optional[str] = None
+    address: Optional[str] = None
+    profile_picture: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
     is_active: bool = True

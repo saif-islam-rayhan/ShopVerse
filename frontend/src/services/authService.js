@@ -58,3 +58,25 @@ export const logout = () => {
   localStorage.removeItem('access_token');
   localStorage.removeItem('user');
 };
+
+/**
+ * Get user profile
+ * @returns {Promise} User profile data
+ */
+export const getProfile = async () => {
+  const response = await apiClient.get('/auth/profile');
+  return response.data;
+};
+
+/**
+ * Update user profile
+ * @param {Object} profileData - Profile data to update
+ * @param {string} profileData.full_name - User full name
+ * @param {string} profileData.address - User address
+ * @param {string} profileData.profile_picture - Profile picture URL
+ * @returns {Promise} Updated profile data
+ */
+export const updateProfile = async (profileData) => {
+  const response = await apiClient.put('/auth/profile', profileData);
+  return response.data;
+};

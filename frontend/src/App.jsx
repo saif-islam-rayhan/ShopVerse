@@ -5,10 +5,18 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { ProfilePage } from './pages/ProfilePage';
 import './styles/index.css';
 
 function App() {
-  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  // FIXED: Using your specific Client ID directly
+  const googleClientId = "286978197006-tthp8770ulktfn909lsteaf8flohcjrb.apps.googleusercontent.com";
+
+  // DEBUG: Check console to see what URL needs to be added to Google
+  if (typeof window !== 'undefined') {
+    console.log("⚠️ GOOGLE AUTH DEBUG ⚠️");
+    console.log("Add this URL to Google Console 'Authorized JavaScript origins':", window.location.origin);
+  }
 
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
@@ -23,6 +31,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
                 </ProtectedRoute>
               }
             />

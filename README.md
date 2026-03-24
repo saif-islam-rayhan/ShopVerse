@@ -127,7 +127,7 @@ mongod
 
 6. **Run backend server:**
 ```bash
-python -m uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload --port 5000
 ```
 
 Backend will run at `http://localhost:8000`

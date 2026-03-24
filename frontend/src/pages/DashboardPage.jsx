@@ -1,10 +1,21 @@
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/dashboard.css';
 
 export const DashboardPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    if (location.state?.showSuccess) {
+      setShowSuccess(true);
+      const timer = setTimeout(() => setShowSuccess(false), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [location.state]);
 
   const handleLogout = () => {
     logout();
@@ -13,11 +24,33 @@ export const DashboardPage = () => {
 
   return (
     <div className="dashboard-container">
+      {showSuccess && (
+        <div className="success-banner">
+          <div className="success-banner-content">
+            <span className="success-icon">✓</span>
+            <div>
+              <h3>Login Successful!</h3>
+              <p>Welcome back to ShopVerse, {user?.username}!</p>
+            </div>
+            <button 
+              className="success-banner-close" 
+              onClick={() => setShowSuccess(false)}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
       <div className="dashboard-header">
         <h1>Welcome, {user?.username}!</h1>
-        <button className="btn btn-secondary" onClick={handleLogout}>
-          Logout
-        </button>
+        <div className="header-actions">
+          <button className="btn btn-primary" onClick={() => navigate('/profile')}>
+            View Profile
+          </button>
+          <button className="btn btn-secondary" onClick={handleLogout}>
+            Logout
+          </button>
+        </div>
       </div>
 
       <div className="dashboard-content">

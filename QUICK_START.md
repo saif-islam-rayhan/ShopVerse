@@ -40,7 +40,7 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 # Start backend server
-python -m uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload --port 5000
 ```
 
 ✅ Backend running at `http://localhost:8000`

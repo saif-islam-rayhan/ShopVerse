@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGoogleLogin } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 import { loginUser, googleLogin } from '../services/authService';
 import { useAuth } from '../context/AuthContext';
 import '../styles/auth.css';
@@ -11,9 +11,13 @@ export const LoginPage = () => {
     password: '',
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { storeAuth } = useAuth();
+  
+  // FIXED: Hardcoded Client ID to match App.jsx
+  const hasGoogleConfig = true;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,37 +35,81 @@ export const LoginPage = () => {
       setError('Email and password are required');
       return;
     }
+    
+    console.log('Attempting login to backend...');
 
     setLoading(true);
     try {
       const authResponse = await loginUser(formData.email, formData.password);
       storeAuth(authResponse);
-      navigate('/dashboard'); // Redirect to dashboard after successful login
+      setSuccess(`✓ Welcome back, ${authResponse.user?.email}! Login successful!`);
+      setError('');
+      // Redirect to dashboard after 1.5 seconds
+      setTimeout(() => {
+        navigate('/dashboard', { state: { showSuccess: true } });
+      }, 1500);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Login failed. Please try again.');
+      console.error('Login Error Details:', err);
+      const errorMsg = err.response?.data?.detail || `Login failed: ${err.message}`;
+      setError(errorMsg);
+      setSuccess('');
     } finally {
       setLoading(false);
     }
   };
 
-  // Google login handler
-  const googleLoginHandler = useGoogleLogin({
-    onSuccess: async (credentialResponse) => {
-      try {
-        setLoading(true);
-        const authResponse = await googleLogin(credentialResponse.access_token);
-        storeAuth(authResponse);
-        navigate('/dashboard');
-      } catch (err) {
-        setError('Google login failed. Please try again.');
-      } finally {
-        setLoading(false);
+  // Google login handler - using standard GoogleLogin component for ID Token
+  const handleGoogleSuccess = async (credentialResponse) => {
+    try {
+      console.log("1. Google Credential Received:", credentialResponse);
+      
+      if (!credentialResponse.credential) {
+        throw new Error("No credential received from Google");
       }
-    },
-    onError: () => {
-      setError('Google login failed');
-    },
-  });
+
+      setLoading(true);
+      setError('');
+      
+      // Pass the credential (ID token) to backend instead of access_token
+      console.log("2. Sending token to backend for database save...");
+      const authResponse = await googleLogin(credentialResponse.credential);
+      console.log("3. Backend Success Response:", authResponse);
+      storeAuth(authResponse);
+      
+      // Show success message and redirect to dashboard/home
+      setSuccess(`✓ Welcome, ${authResponse.user?.email}! Successfully signed in with Google!`);
+      setTimeout(() => {
+        navigate('/dashboard', { replace: true, state: { showSuccess: true } });
+      }, 1000);
+    } catch (err) {
+      console.error("Full Login Error:", err);
+      let errorMsg = 'Google login failed. Please try again.';
+      
+      // Check for backend error message
+      if (err.response) {
+        // Backend returned an error (400, 401, 500)
+        console.error("Backend Error Data:", err.response.data);
+        errorMsg = err.response.data?.detail || `Server Error: ${err.response.status}`;
+      } else if (err.request) {
+        // Network error (Backend not reachable)
+        errorMsg = "Network Error: Cannot connect to backend server. Is it running?";
+      } else {
+        errorMsg = err.message || "Unknown error occurred";
+      }
+      
+      setError(errorMsg);
+      // Show alert so user definitely sees the specific error
+      alert(`Login Failed: ${errorMsg}`);
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    console.error("Google Popup Closed or Failed to Load");
+    setError('Failed to sign in with Google. Please check your connection.');
+    alert("Google Popup Failed. Check console for details.");
+    setLoading(false);
+  };
 
   return (
     <div className="auth-container">
@@ -69,6 +117,7 @@ export const LoginPage = () => {
         <h1>Welcome Back</h1>
         <p className="auth-subtitle">Sign in to your ShopVerse account</p>
 
+        {success && <div className="success-message">{success}</div>}
         {error && <div className="error-message">{error}</div>}
 
         <form onSubmit={handleSubmit}>
@@ -106,17 +155,21 @@ export const LoginPage = () => {
           </button>
         </form>
 
-        <div className="divider">Or</div>
+        {hasGoogleConfig && (
+          <>
+            <div className="divider">Or</div>
 
-        <button
-          type="button"
-          className="btn btn-google"
-          onClick={() => googleLoginHandler()}
-          disabled={loading}
-        >
-          <span className="google-icon">G</span>
-          Sign in with Google
-        </button>
+            <div className="google-login-wrapper" style={{ display: 'flex', justifyContent: 'center' }}>
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+                theme="filled_blue"
+                shape="pill"
+                text="signin_with"
+              />
+            </div>
+          </>
+        )}
 
         <div className="auth-footer">
           <p>

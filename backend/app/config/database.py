@@ -31,7 +31,7 @@ async def connect_to_mongo():
 async def close_mongo_connection():
     """Close MongoDB connection."""
     global db
-    if db:
+    if db is not None:
         db.client.close()
         logger.info("Disconnected from MongoDB")
 

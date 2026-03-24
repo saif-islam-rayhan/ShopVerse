@@ -166,7 +166,7 @@ This document summarizes all files and components created for the ShopVerse e-co
 ## 📋 Checklist: What's Ready
 
 ### Development
-- [x] Backend server runs on localhost:8000
+- [x] Backend server runs on localhost:5000
 - [x] Frontend dev server runs on localhost:5173
 - [x] Database connection configured
 - [x] API documentation available at `/docs`
@@ -208,7 +208,7 @@ This document summarizes all files and components created for the ShopVerse e-co
    python -m venv venv
    source venv/bin/activate
    pip install -r requirements.txt
-   python -m uvicorn app.main:app --reload
+   python -m uvicorn app.main:app --reload --port 5000
    ```
 
 2. **Frontend**
@@ -222,7 +222,7 @@ This document summarizes all files and components created for the ShopVerse e-co
 
 3. **Access Application**
    - Frontend: http://localhost:5173
-   - API Docs: http://localhost:8000/docs
+   - API Docs: http://localhost:5000/docs
 
 ### To Deploy to Production
 

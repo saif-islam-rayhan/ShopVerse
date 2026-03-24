@@ -92,12 +92,10 @@ npm run dev
 ## 4. Verify Installation
 
 ### Backend
-- Open http://localhost:8000
-- Should see: `{"message": "Welcome to ShopVerse API"}`
-- API Docs: http://localhost:8000/docs
+- Open http://localhost:5000
+- API Docs: http://localhost:5000/docs
 
 ### Frontend
-- Open http://localhost:5173
 - Should see login page with "Create one here" link
 
 ### Database
